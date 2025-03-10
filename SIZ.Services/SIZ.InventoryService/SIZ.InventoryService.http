@@ -1,0 +1,6 @@
+@SIZ.InventoryService_HostAddress = http://localhost:5296
+
+GET {{SIZ.InventoryService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

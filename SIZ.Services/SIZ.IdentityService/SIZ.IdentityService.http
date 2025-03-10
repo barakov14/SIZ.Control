@@ -1,0 +1,6 @@
+@SIZ.IdentityService_HostAddress = http://localhost:5129
+
+GET {{SIZ.IdentityService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,6 @@
+﻿services:
+  siz.control:
+    image: siz.control
+    build:
+      context: .
+      dockerfile: SIZ.Control/Dockerfile
