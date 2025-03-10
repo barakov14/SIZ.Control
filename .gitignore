@@ -1,5 +1,59 @@
+# 🔹 Операционные системы
+.DS_Store
+Thumbs.db
+
+# 🔹 IDE и редакторы
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln*
+*.user
+*.swp
+*.sln.docstates
+*.sln.ide
+_ReSharper.Caches/
+riderModule.iml
+
+# 🔹 Build output (bin/obj)
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+artifacts/
+*.ps1
+
+# 🔹 NuGet / Paket
+.nuget/
+packages/
+*.nupkg
+project.lock.json
+paket-files/
+
+# 🔹 Logs / Debug / Profiler
+*.log
+logs/
+**/log/
+*.tlog
+*.zip
+
+# 🔹 Entity Framework
+migrations/
+Migrations/
+
+# 🔹 Secrets / Config
+.env
+secrets.json
+appsettings.Development.json
+appsettings.Local.json
+
+# 🔹 Docker
+docker-compose.override.yml
+.dockerignore
+**/Dockerfile
+
+# 🔹 Git
+.gitignore
+.gitattributes
+
+
+*.iml

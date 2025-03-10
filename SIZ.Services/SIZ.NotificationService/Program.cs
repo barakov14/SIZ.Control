@@ -1,4 +1,5 @@
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using SIZ.NotificationService;
 
 
@@ -16,6 +17,13 @@ builder.Services.AddMassTransit(x =>
         });
     });
 });
+
+// Загружаем переменные окружения
+var configuration = builder.Configuration;
+
+// Подключаем базу данных
+builder.Services.AddDbContext<DbContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
 var host = builder.Build();
 host.Run();
