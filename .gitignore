@@ -49,10 +49,7 @@ appsettings.Local.json
 # 🔹 Docker
 docker-compose.override.yml
 .dockerignore
-**/Dockerfile
 
-# 🔹 Git
-.gitignore
 .gitattributes
 
 
