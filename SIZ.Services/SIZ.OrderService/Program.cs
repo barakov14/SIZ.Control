@@ -1,4 +1,5 @@
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+var configuration = builder.Configuration;
 
 builder.Services.AddMassTransit(x =>
 {
@@ -18,6 +20,12 @@ builder.Services.AddMassTransit(x =>
         });
     });
 });
+
+
+
+// Подключаем базу данных
+builder.Services.AddDbContext<DbContext>(options =>
+    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 

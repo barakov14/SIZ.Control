@@ -1,6 +1,136 @@
-﻿services:
-  siz.control:
-    image: siz.control
-    build:
-      context: .
-      dockerfile: SIZ.Control/Dockerfile
+﻿version: '3.9'
+
+services:
+  ### 🔹 PostgreSQL (База данных)
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  ### 🔹 Redis (Кеш)
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  ### 🔹 RabbitMQ (Очередь сообщений)
+  rabbitmq:
+    image: rabbitmq:4.0.7
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+
+  ### 🔹 API Gateway (YARP)
+  api_gateway:
+    build: ./SIZ.Services/SIZ.ApiGateway
+    container_name: api_gateway
+    ports:
+      - "5000:5000"
+    depends_on:
+      - inventory_service
+      - order_service
+    restart: always
+    
+  
+  ### 🔹 Identity Service (Аутентификация)
+  identity_service:
+    build: ./SIZ.Services/SIZ.IdentityService
+    container_name: identity_service
+    ports:
+      - "5004:5004"
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_SSL: ${DB_SSL}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+    restart: always
+
+
+  ### 🔹 Inventory Service (Склад СИЗ)
+  inventory_service:
+    build: ./SIZ.Services/SIZ.InventoryService
+    container_name: inventory_service
+    ports:
+      - "5002:5002"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - redis
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_SSL: ${DB_SSL}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+    restart: always
+
+  ### 🔹 Order Service (Заявки на СИЗ)
+  order_service:
+    build: ./SIZ.Services/SIZ.OrderService
+    container_name: order_service
+    ports:
+      - "5003:5003"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - redis
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_SSL: ${DB_SSL}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+    restart: always
+
+  ### 🔹 Notification Service (RabbitMQ Worker)
+  notification_service:
+    build: ./SIZ.Services/SIZ.NotificationService
+    container_name: notification_service
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+    restart: always
+
+volumes:
+  pg_data:

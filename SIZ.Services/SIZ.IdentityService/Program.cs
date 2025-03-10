@@ -1,9 +1,20 @@
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
+
+
+var configuration = builder.Configuration;
+
+// Подключаем базу данных
+builder.Services.AddDbContext<DbContext>(options =>
+    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
 
 var app = builder.Build();
 

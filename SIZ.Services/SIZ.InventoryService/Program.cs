@@ -1,4 +1,3 @@
-
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +12,7 @@ var configuration = builder.Configuration;
 
 // Подключаем базу данных
 builder.Services.AddDbContext<DbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddMassTransit(x =>
 {

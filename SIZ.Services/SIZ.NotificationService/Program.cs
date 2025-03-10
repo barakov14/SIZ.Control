@@ -23,7 +23,7 @@ var configuration = builder.Configuration;
 
 // Подключаем базу данных
 builder.Services.AddDbContext<DbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
 var host = builder.Build();
 host.Run();
